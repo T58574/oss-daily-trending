@@ -2,8 +2,8 @@ import httpx
 import os
 import re
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-CHAT_ID = os.environ.get("CHAT_ID")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+CHAT_ID = os.environ.get("CHAT_ID", "").strip()
 
 def escape_markdown(text):
     """
@@ -11,9 +11,15 @@ def escape_markdown(text):
     """
     if not text:
         return ""
-    # Characters that must be escaped in MarkdownV2
+    # Characters that must be escaped in MarkdownV2 outside of code blocks/links
     escape_chars = r"_*[]()~`>#+-=|{}.!"
-    return re.sub(f"([{re.escape(escape_chars)}])", r"\\\1", text)
+    res = ""
+    for c in str(text):
+        if c in escape_chars:
+            res += "\\" + c
+        else:
+            res += c
+    return res
 
 def get_trending():
     # using ossinsight api for top trending repos (24h)
@@ -33,9 +39,11 @@ def get_trending():
 
 def format_message(repos):
     if not repos:
-        return "⚠️ *не удалось получить тренды сегодня*"
+        return escape_markdown("⚠️ не удалось получить тренды сегодня")
 
-    lines = ["🔥 *GitHub Trending (24h)*\n"]
+    header = escape_markdown("🔥 GitHub Trending (24h)")
+    lines = [f"*{header}*\n"]
+    
     for i, repo in enumerate(repos, 1):
         # ossinsight keys: repo_name, description, stars, primary_language
         name = repo.get("repo_name") or "unknown/repo"
@@ -51,10 +59,13 @@ def format_message(repos):
         safe_name = escape_markdown(name)
         safe_desc = escape_markdown(desc)
         safe_lang = escape_markdown(lang)
+        safe_stars = escape_markdown(str(stars))
         
-        link = f"https://github.com/{name}"
+        # for links in markdownv2, only ')' and '\' must be escaped inside the (...) part
+        link = f"https://github.com/{name}".replace("\\", "\\\\").replace(")", "\\)")
         
-        line = f"{i}\\. [{safe_name}]({link}) ⭐{stars} `{safe_lang}`"
+        index = escape_markdown(f"{i}.")
+        line = f"{index} [{safe_name}]({link}) ⭐{safe_stars} `{safe_lang}`"
         lines.append(line)
         if safe_desc:
             lines.append(f"   _{safe_desc}_")
