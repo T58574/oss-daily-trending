@@ -5,11 +5,12 @@ import json
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 CHAT_ID = os.environ.get("CHAT_ID", "").strip()
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
 
 def escape_markdown(text):
     if not text:
         return ""
+    # Characters that must be escaped in MarkdownV2 outside of code blocks/links
     escape_chars = r"_*[]()~`>#+-=|{}.!"
     res = ""
     for c in str(text):
@@ -33,15 +34,14 @@ def get_trending():
         print(f"error fetching data: {e}")
         return []
 
-def summarize_with_gemini(repos):
-    if not GEMINI_API_KEY:
-        print("!!! GEMINI_API_KEY not set, skipping AI summary")
+def summarize_with_groq(repos):
+    if not GROQ_API_KEY:
+        print("!!! GROQ_API_KEY not set, skipping AI summary")
         return None
 
-    # используем проверенную модель gemini-2.0-flash (она точно есть в списке)
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+    url = "https://api.groq.com/openai/v1/chat/completions"
     
-    print(f"--- sending {len(repos)} repos to gemini-2.0-flash ---")
+    print(f"--- sending {len(repos)} repos to groq (llama-3.3-70b) ---")
     
     repos_context = []
     for r in repos:
@@ -60,43 +60,50 @@ def summarize_with_gemini(repos):
     
     ВАЖНОЕ ПРАВИЛО ПО ФОРМАТУ (Telegram MarkdownV2):
     - Экранируй ВСЕ спецсимволы: _ * [ ] ( ) ~ ` > # + - = | {{ }} . ! (используй обратный слэш \\)
-    - Пример: [Ссылка](url), заголовок: *Заголовок*, список: 1\\. Элемент
+    - Ссылки делай так: [Название](url)
+    - Жирный текст: *текст*
+    - Курсив: _текст_
     
     Структура сообщения:
     1. Заголовок: 🔥 GitHub Trending (24h)
-    2. Выдели 5 самых мощных проектов. 
-    3. Для каждого: [Название](https://github.com/название), суть одной фразой и почему это "маст-хэв".
-    4. В конце — краткий итог: какой тренд сегодня (например, "AI всё еще захватывает мир").
+    2. Выдели 5-7 самых мощных проектов. 
+    3. Для каждого: [Название](https://github.com/название), суть одной фразой и кратко почему это круто.
+    4. В конце — краткий итог: главный тренд дня.
     
     Данные:
     {json.dumps(repos_context, ensure_ascii=False)}
     
-    Отвечай ТОЛЬКО готовым текстом сообщения, который я могу сразу отправить в Telegram.
+    Отвечай ТОЛЬКО готовым текстом сообщения. Не пиши преамбул.
     """
 
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
     payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }]
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": "Ты эксперт, который пишет в Telegram на MarkdownV2. Всегда экранируешь спецсимволы."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.7,
+        "max_tokens": 2048
     }
 
     try:
-        r = httpx.post(url, json=payload, timeout=60)
-        print(f"gemini status code: {r.status_code}")
+        r = httpx.post(url, json=payload, headers=headers, timeout=60)
+        print(f"groq status code: {r.status_code}")
         r.raise_for_status()
         result = r.json()
         
-        if 'candidates' in result and result['candidates']:
-            content = result['candidates'][0]['content']['parts'][0]['text']
-            print("--- gemini response received successfully ---")
-            return content.strip()
-        else:
-            print(f"!!! gemini returned unexpected structure: {result}")
-            return None
+        content = result['choices'][0]['message']['content']
+        print("--- groq response received successfully ---")
+        return content.strip()
     except Exception as e:
-        print(f"!!! gemini error: {e}")
+        print(f"!!! groq error: {e}")
         if r := getattr(e, 'response', None):
-            print(f"gemini full response: {r.text}")
+            print(f"groq full response: {r.text}")
         return None
 
 def format_fallback_message(repos):
@@ -146,10 +153,10 @@ if __name__ == "__main__":
     trending_repos = get_trending()
     print(f"fetched {len(trending_repos)} repos from ossinsight")
     
-    message = summarize_with_gemini(trending_repos)
+    message = summarize_with_groq(trending_repos)
     
     if message:
-        print("sending AI generated message")
+        print("sending AI generated message (Groq)")
         send(message)
     else:
         print("falling back to manual formatting")
