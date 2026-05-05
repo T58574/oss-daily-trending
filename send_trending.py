@@ -38,8 +38,8 @@ def summarize_with_gemini(repos):
         print("!!! GEMINI_API_KEY not set, skipping AI summary")
         return None
 
-    # используем актуальную модель gemini-2.0-flash
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+    # используем доступную в фри-тире модель gemini-3-flash-live
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-live:generateContent?key={GEMINI_API_KEY}"
     
     print(f"--- sending {len(repos)} repos to gemini-2.0-flash ---")
     
