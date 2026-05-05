@@ -27,7 +27,7 @@ def get_trending():
         data = r.json()
         if isinstance(data, dict) and "data" in data:
             rows = data["data"].get("rows", [])
-            return rows[:15] # берем чуть больше для нейронки
+            return rows[:15]
         return []
     except Exception as e:
         print(f"error fetching data: {e}")
@@ -35,13 +35,14 @@ def get_trending():
 
 def summarize_with_gemini(repos):
     if not GEMINI_API_KEY:
-        print("GEMINI_API_KEY not set, skipping AI summary")
+        print("!!! GEMINI_API_KEY not set, skipping AI summary")
         return None
 
     # используем актуальную модель gemini-2.0-flash
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
     
-    # готовим контекст для нейронки
+    print(f"--- sending {len(repos)} repos to gemini-2.0-flash ---")
+    
     repos_context = []
     for r in repos:
         repos_context.append({
@@ -52,20 +53,25 @@ def summarize_with_gemini(repos):
         })
 
     prompt = f"""
-    Ты — эксперт по Open Source. Ниже список трендовых репозиториев GitHub за последние 24 часа.
-    Твоя задача: составить крутой, краткий и стильный дайджест на русском языке для Telegram канала.
+    Ты — эксперт по Open Source и крутой тех-блогер. 
+    Ниже список трендовых репозиториев GitHub за последние 24 часа.
     
-    Правила:
-    1. Используй MarkdownV2 (экранируй спецсимволы: _ * [ ] ( ) ~ ` > # + - = | {{ }} . !).
-    2. Выдели 5-7 самых интересных проектов.
-    3. Для каждого проекта: Название (ссылка на гитхаб), краткая суть (1 предложение) и почему это круто.
-    4. Добавь подходящие эмодзи.
-    5. В конце добавь краткий вывод о сегодняшних трендах (например, "сегодня правит AI" или "много инструментов на Rust").
+    Твоя задача: Составь ИНТЕРЕСНЫЙ и СТИЛЬНЫЙ дайджест на РУССКОМ языке.
     
-    Список репозиториев:
+    ВАЖНОЕ ПРАВИЛО ПО ФОРМАТУ (Telegram MarkdownV2):
+    - Экранируй ВСЕ спецсимволы: _ * [ ] ( ) ~ ` > # + - = | {{ }} . ! (используй обратный слэш \\)
+    - Пример: [Ссылка](url), заголовок: *Заголовок*, список: 1\\. Элемент
+    
+    Структура сообщения:
+    1. Заголовок: 🔥 GitHub Trending (24h)
+    2. Выдели 5 самых мощных проектов. 
+    3. Для каждого: [Название](https://github.com/название), суть одной фразой и почему это "маст-хэв".
+    4. В конце — краткий итог: какой тренд сегодня (например, "AI всё еще захватывает мир").
+    
+    Данные:
     {json.dumps(repos_context, ensure_ascii=False)}
     
-    Отвечай ТОЛЬКО готовым текстом сообщения.
+    Отвечай ТОЛЬКО готовым текстом сообщения, который я могу сразу отправить в Telegram.
     """
 
     payload = {
@@ -76,12 +82,21 @@ def summarize_with_gemini(repos):
 
     try:
         r = httpx.post(url, json=payload, timeout=60)
+        print(f"gemini status code: {r.status_code}")
         r.raise_for_status()
         result = r.json()
-        content = result['candidates'][0]['content']['parts'][0]['text']
-        return content.strip()
+        
+        if 'candidates' in result and result['candidates']:
+            content = result['candidates'][0]['content']['parts'][0]['text']
+            print("--- gemini response received successfully ---")
+            return content.strip()
+        else:
+            print(f"!!! gemini returned unexpected structure: {result}")
+            return None
     except Exception as e:
-        print(f"gemini error: {e}")
+        print(f"!!! gemini error: {e}")
+        if r := getattr(e, 'response', None):
+            print(f"gemini full response: {r.text}")
         return None
 
 def format_fallback_message(repos):
@@ -129,9 +144,14 @@ def send(text):
 
 if __name__ == "__main__":
     trending_repos = get_trending()
+    print(f"fetched {len(trending_repos)} repos from ossinsight")
+    
     message = summarize_with_gemini(trending_repos)
     
-    if not message:
-        message = format_fallback_message(trending_repos)
-        
-    send(message)
+    if message:
+        print("sending AI generated message")
+        send(message)
+    else:
+        print("falling back to manual formatting")
+        fallback = format_fallback_message(trending_repos)
+        send(fallback)
