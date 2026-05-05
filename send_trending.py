@@ -1,24 +1,11 @@
 import httpx
 import os
-import re
 import json
+import html
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 CHAT_ID = os.environ.get("CHAT_ID", "").strip()
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
-
-def escape_markdown(text):
-    if not text:
-        return ""
-    # Characters that must be escaped in MarkdownV2 outside of code blocks/links
-    escape_chars = r"_*[]()~`>#+-=|{}.!"
-    res = ""
-    for c in str(text):
-        if c in escape_chars:
-            res += "\\" + c
-        else:
-            res += c
-    return res
 
 def get_trending():
     url = "https://api.ossinsight.io/v1/trends/repos/"
@@ -58,22 +45,21 @@ def summarize_with_groq(repos):
     
     Твоя задача: Составь ИНТЕРЕСНЫЙ и СТИЛЬНЫЙ дайджест на РУССКОМ языке.
     
-    ВАЖНОЕ ПРАВИЛО ПО ФОРМАТУ (Telegram MarkdownV2):
-    - Экранируй ВСЕ спецсимволы: _ * [ ] ( ) ~ ` > # + - = | {{ }} . ! (используй обратный слэш \\)
-    - Ссылки делай так: [Название](url)
-    - Жирный текст: *текст*
-    - Курсив: _текст_
+    ВАЖНОЕ ПРАВИЛО ПО ФОРМАТУ (Telegram HTML):
+    - Используй ТОЛЬКО эти тэги: <b>текст</b> (жирный), <i>текст</i> (курсив), <a href="url">текст</a> (ссылка).
+    - НЕ используй Markdown символы типа * или _.
+    - Весь текст должен быть валидным HTML. Специальные символы <, >, & должны быть заменены на &lt;, &gt;, &amp; (но нейронка может просто писать обычный текст, я его экранирую).
     
     Структура сообщения:
-    1. Заголовок: 🔥 GitHub Trending (24h)
+    1. Заголовок: 🔥 <b>GitHub Trending (24h)</b>
     2. Выдели 5-7 самых мощных проектов. 
-    3. Для каждого: [Название](https://github.com/название), суть одной фразой и кратко почему это круто.
+    3. Для каждого: <a href="https://github.com/название">Название</a>, суть одной фразой и кратко почему это круто.
     4. В конце — краткий итог: главный тренд дня.
     
     Данные:
     {json.dumps(repos_context, ensure_ascii=False)}
     
-    Отвечай ТОЛЬКО готовым текстом сообщения. Не пиши преамбул.
+    Отвечай ТОЛЬКО готовым текстом сообщения в формате HTML. Не пиши преамбул.
     """
 
     headers = {
@@ -84,7 +70,7 @@ def summarize_with_groq(repos):
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": [
-            {"role": "system", "content": "Ты эксперт, который пишет в Telegram на MarkdownV2. Всегда экранируешь спецсимволы."},
+            {"role": "system", "content": "Ты эксперт, который пишет в Telegram на HTML. Используешь тэги <b>, <i>, <a>."},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.7,
@@ -102,29 +88,22 @@ def summarize_with_groq(repos):
         return content.strip()
     except Exception as e:
         print(f"!!! groq error: {e}")
-        if r := getattr(e, 'response', None):
-            print(f"groq full response: {r.text}")
         return None
 
 def format_fallback_message(repos):
-    header = escape_markdown("🔥 GitHub Trending (24h) [Fallback]")
-    lines = [f"*{header}*\n"]
+    header = "🔥 <b>GitHub Trending (24h) [Fallback]</b>\n"
+    lines = [header]
     for i, repo in enumerate(repos[:10], 1):
-        name = repo.get("repo_name") or "unknown/repo"
-        desc = repo.get("description") or ""
+        name = html.escape(repo.get("repo_name") or "unknown/repo")
+        desc = html.escape((repo.get("description") or "")[:100])
         stars = repo.get("stars") or 0
-        lang = repo.get("primary_language") or "—"
+        lang = html.escape(repo.get("primary_language") or "—")
+        link = f"https://github.com/{name}"
         
-        safe_name = escape_markdown(name)
-        safe_desc = escape_markdown(desc[:100])
-        safe_lang = escape_markdown(lang)
-        safe_stars = escape_markdown(str(stars))
-        link = f"https://github.com/{name}".replace("\\", "\\\\").replace(")", "\\)")
-        
-        line = f"{escape_markdown(str(i))}\\. [{safe_name}]({link}) ⭐{safe_stars} `{safe_lang}`"
+        line = f"{i}. <a href=\"{link}\">{name}</a> ⭐{stars} <code>{lang}</code>"
         lines.append(line)
-        if safe_desc:
-            lines.append(f"   _{safe_desc}_")
+        if desc:
+            lines.append(f"   <i>{desc}</i>")
     return "\n".join(lines)
 
 def send(text):
@@ -136,61 +115,18 @@ def send(text):
     payload = {
         "chat_id": CHAT_ID,
         "text": text,
-        "parse_mode": "MarkdownV2",
+        "parse_mode": "HTML",
         "disable_web_page_preview": True
     }
     
     try:
         r = httpx.post(url, json=payload, timeout=20)
-        r.raise_for_status()
-        print("message sent successfully")
+        if r.status_code != 200:
+            print(f"error sending message: {r.text}")
+        else:
+            print("message sent successfully")
     except Exception as e:
         print(f"error sending message: {e}")
-        if r := getattr(e, 'response', None):
-            print(f"telegram response: {r.text}")
-
-def safe_escape(text):
-    """
-    Final escape for the whole message to ensure Telegram doesn't reject it.
-    We aggressively escape dots, hyphens, and parentheses, but try to preserve 
-    the basic markdown structure for links, bold, and italic.
-    """
-    if not text:
-        return ""
-    
-    # Characters that MUST be escaped in MarkdownV2 outside of code blocks/links
-    # _ * [ ] ( ) ~ ` > # + - = | { } . !
-    
-    # We'll use a regex-based approach to escape reserved characters 
-    # while attempting to ignore existing escapes and markdown markers.
-    
-    # First, protect links: find [text](url) and replace with a placeholder
-    links = []
-    def link_repl(match):
-        links.append(match.group(0))
-        return f"__LINK_PLACEHOLDER_{len(links)-1}__"
-    
-    # Regex for [text](url)
-    protected_text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', link_repl, text)
-    
-    # Escape characters that are often missed by AI
-    # We escape: . - ! ( ) # + = { } | > ~
-    # We are more careful with * _ [ ] as they are often used for bold/italic/links
-    chars_to_escape = r".-!()#+=}{%|#~" # % and # are just for safety
-    
-    for char in chars_to_escape:
-        # Escape the character if it's not already escaped
-        protected_text = protected_text.replace(char, "\\" + char)
-    
-    # Restore links and escape reserved chars INSIDE the link URL (except for \ and ))
-    for i, original_link in enumerate(links):
-        # original_link is [text](url)
-        # We need to escape reserved chars in 'text' and 'url' separately if needed,
-        # but for now let's just restore it and hope for the best.
-        # Actually, let's just make sure the URL part doesn't have unescaped ')'
-        protected_text = protected_text.replace(f"__LINK_PLACEHOLDER_{i}__", original_link)
-        
-    return protected_text
 
 if __name__ == "__main__":
     trending_repos = get_trending()
@@ -199,10 +135,8 @@ if __name__ == "__main__":
     message = summarize_with_groq(trending_repos)
     
     if message:
-        print("sending AI generated message (Groq)")
-        # Force safety escape
-        final_message = safe_escape(message)
-        send(final_message)
+        print("sending AI generated message (Groq HTML)")
+        send(message)
     else:
         print("falling back to manual formatting")
         fallback = format_fallback_message(trending_repos)
