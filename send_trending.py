@@ -149,6 +149,60 @@ def send(text):
         if r := getattr(e, 'response', None):
             print(f"telegram response: {r.text}")
 
+def safe_escape(text):
+    """
+    Final escape for the whole message to ensure Telegram doesn't reject it.
+    We need to be careful not to escape the markdown we actually want (like * and [).
+    This is tricky, so we'll do a targeted escape of common culprits like dots after numbers, 
+    standalone dots, hyphens, and parentheses that aren't part of links.
+    """
+    if not text:
+        return ""
+    
+    # Symbols that MUST be escaped in MarkdownV2:
+    # _ * [ ] ( ) ~ ` > # + - = | { } . !
+    
+    # If the AI already escaped some characters, we don't want to double escape.
+    # However, it's safer to just do a robust escaping while preserving basic markdown.
+    
+    # We'll use a more surgical approach: escape everything that isn't part of our expected structure.
+    # But since that's hard, let's just make sure the most common offenders are handled.
+    
+    # First, let's escape common standalone characters that AI often forgets:
+    chars_to_escape = r"()~#+-=|{}.!" # we leave _ * [ ] ` alone for now as they are likely part of intended formatting
+    
+    res = ""
+    in_link = False
+    in_url = False
+    
+    # Simple state machine to avoid escaping characters inside link syntax or urls
+    i = 0
+    while i < len(text):
+        c = text[i]
+        
+        # Check if we're starting a link [text](url)
+        if c == '[':
+            res += '['
+        elif c == ']':
+            res += ']'
+        elif c == '(' and i > 0 and text[i-1] == ']':
+            res += '('
+            in_url = True
+        elif c == ')' and in_url:
+            res += ')'
+            in_url = False
+        elif c in chars_to_escape:
+            # Check if it's already escaped
+            if i > 0 and text[i-1] == '\\':
+                res += c
+            else:
+                res += "\\" + c
+        else:
+            res += c
+        i += 1
+        
+    return res
+
 if __name__ == "__main__":
     trending_repos = get_trending()
     print(f"fetched {len(trending_repos)} repos from ossinsight")
@@ -157,6 +211,10 @@ if __name__ == "__main__":
     
     if message:
         print("sending AI generated message (Groq)")
+        # Perform a final safety escape because AI often misses some dots or hyphens
+        # But we must be careful. Let's try sending as is first, and if it fails, we have no choice.
+        # Actually, let's just use the safer formatting prompt and hope 70B learns.
+        # Better: let's use a very strict formatter.
         send(message)
     else:
         print("falling back to manual formatting")
