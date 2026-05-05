@@ -1,17 +1,15 @@
 import httpx
 import os
 import re
+import json
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 CHAT_ID = os.environ.get("CHAT_ID", "").strip()
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 
 def escape_markdown(text):
-    """
-    Helper function to escape telegram markdown v2 special characters.
-    """
     if not text:
         return ""
-    # Characters that must be escaped in MarkdownV2 outside of code blocks/links
     escape_chars = r"_*[]()~`>#+-=|{}.!"
     res = ""
     for c in str(text):
@@ -22,54 +20,89 @@ def escape_markdown(text):
     return res
 
 def get_trending():
-    # using ossinsight api for top trending repos (24h)
     url = "https://api.ossinsight.io/v1/trends/repos/"
     try:
         r = httpx.get(url, timeout=30)
         r.raise_for_status()
         data = r.json()
-        # ossinsight response structure: {"data": {"rows": [...], ...}}
         if isinstance(data, dict) and "data" in data:
             rows = data["data"].get("rows", [])
-            return rows[:10]
+            return rows[:15] # берем чуть больше для нейронки
         return []
     except Exception as e:
         print(f"error fetching data: {e}")
         return []
 
-def format_message(repos):
-    if not repos:
-        return escape_markdown("⚠️ не удалось получить тренды сегодня")
+def summarize_with_gemini(repos):
+    if not GEMINI_API_KEY:
+        print("GEMINI_API_KEY not set, skipping AI summary")
+        return None
 
-    header = escape_markdown("🔥 GitHub Trending (24h)")
-    lines = [f"*{header}*\n"]
+    # используем актуальную модель gemini-2.0-flash
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
     
-    for i, repo in enumerate(repos, 1):
-        # ossinsight keys: repo_name, description, stars, primary_language
+    # готовим контекст для нейронки
+    repos_context = []
+    for r in repos:
+        repos_context.append({
+            "name": r.get("repo_name"),
+            "desc": r.get("description"),
+            "lang": r.get("primary_language"),
+            "stars": r.get("stars")
+        })
+
+    prompt = f"""
+    Ты — эксперт по Open Source. Ниже список трендовых репозиториев GitHub за последние 24 часа.
+    Твоя задача: составить крутой, краткий и стильный дайджест на русском языке для Telegram канала.
+    
+    Правила:
+    1. Используй MarkdownV2 (экранируй спецсимволы: _ * [ ] ( ) ~ ` > # + - = | {{ }} . !).
+    2. Выдели 5-7 самых интересных проектов.
+    3. Для каждого проекта: Название (ссылка на гитхаб), краткая суть (1 предложение) и почему это круто.
+    4. Добавь подходящие эмодзи.
+    5. В конце добавь краткий вывод о сегодняшних трендах (например, "сегодня правит AI" или "много инструментов на Rust").
+    
+    Список репозиториев:
+    {json.dumps(repos_context, ensure_ascii=False)}
+    
+    Отвечай ТОЛЬКО готовым текстом сообщения.
+    """
+
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }]
+    }
+
+    try:
+        r = httpx.post(url, json=payload, timeout=60)
+        r.raise_for_status()
+        result = r.json()
+        content = result['candidates'][0]['content']['parts'][0]['text']
+        return content.strip()
+    except Exception as e:
+        print(f"gemini error: {e}")
+        return None
+
+def format_fallback_message(repos):
+    header = escape_markdown("🔥 GitHub Trending (24h) [Fallback]")
+    lines = [f"*{header}*\n"]
+    for i, repo in enumerate(repos[:10], 1):
         name = repo.get("repo_name") or "unknown/repo"
         desc = repo.get("description") or ""
-        # truncate description
-        if len(desc) > 100:
-            desc = desc[:97] + "..."
-        
         stars = repo.get("stars") or 0
         lang = repo.get("primary_language") or "—"
         
-        # escaping for markdownv2
         safe_name = escape_markdown(name)
-        safe_desc = escape_markdown(desc)
+        safe_desc = escape_markdown(desc[:100])
         safe_lang = escape_markdown(lang)
         safe_stars = escape_markdown(str(stars))
-        
-        # for links in markdownv2, only ')' and '\' must be escaped inside the (...) part
         link = f"https://github.com/{name}".replace("\\", "\\\\").replace(")", "\\)")
         
-        index = escape_markdown(f"{i}.")
-        line = f"{index} [{safe_name}]({link}) ⭐{safe_stars} `{safe_lang}`"
+        line = f"{escape_markdown(str(i))}\\. [{safe_name}]({link}) ⭐{safe_stars} `{safe_lang}`"
         lines.append(line)
         if safe_desc:
             lines.append(f"   _{safe_desc}_")
-            
     return "\n".join(lines)
 
 def send(text):
@@ -86,7 +119,7 @@ def send(text):
     }
     
     try:
-        r = httpx.post(url, json=payload, timeout=10)
+        r = httpx.post(url, json=payload, timeout=20)
         r.raise_for_status()
         print("message sent successfully")
     except Exception as e:
@@ -96,5 +129,9 @@ def send(text):
 
 if __name__ == "__main__":
     trending_repos = get_trending()
-    message = format_message(trending_repos)
+    message = summarize_with_gemini(trending_repos)
+    
+    if not message:
+        message = format_fallback_message(trending_repos)
+        
     send(message)
