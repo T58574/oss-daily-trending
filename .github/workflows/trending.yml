@@ -8,6 +8,8 @@ on:
 jobs:
   send:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # разрешаем коммитить историю обратно в репозиторий
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -16,6 +18,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'  # кешируем зависимости для скорости
 
       - name: Install dependencies
         run: |
@@ -28,3 +31,10 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+      - name: Commit and push history database
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update trending history database [skip ci]" && git push)
