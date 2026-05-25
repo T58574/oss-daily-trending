@@ -24,6 +24,11 @@
     "manaflow-ai/cmux": "2026-05-24T10:02:03.463565+00:00",
     "hugohe3/ppt-master": "2026-05-24T10:02:03.463565+00:00",
     "NemoStation/Marlin-2B": "2026-05-24T10:02:03.463565+00:00",
-    "sapientinc/HRM-Text-1B": "2026-05-24T10:02:03.463565+00:00"
+    "sapientinc/HRM-Text-1B": "2026-05-24T10:02:03.463565+00:00",
+    "anthropics/knowledge-work-plugins": "2026-05-25T11:58:25.710168+00:00",
+    "multica-ai/multica": "2026-05-25T11:58:25.710168+00:00",
+    "Hmbown/CodeWhale": "2026-05-25T11:58:25.710168+00:00",
+    "CohereLabs/command-a-plus-05-2026-w4a4": "2026-05-25T11:58:25.710168+00:00",
+    "meituan-longcat/LongCat-Video-Avatar-1.5": "2026-05-25T11:58:25.710168+00:00"
   }
 }
