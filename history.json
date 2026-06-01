@@ -1,6 +1,6 @@
 {
   "posted_repos": {
-    "colbymchenry/codegraph": "2026-05-22T22:16:34.330367+00:00",
+    "colbymchenry/codegraph": "2026-06-01T13:45:19.085260+00:00",
     "anthropics/claude-plugins-official": "2026-05-22T22:16:34.330367+00:00",
     "Lum1104/Understand-Anything": "2026-05-22T22:16:34.330367+00:00",
     "bytedance-research/Lance": "2026-05-22T22:16:34.330367+00:00",
@@ -34,6 +34,10 @@
     "russellromney/honker": "2026-05-27T11:45:15.056116+00:00",
     "microsoft/agent-governance-toolkit": "2026-05-27T11:45:15.056116+00:00",
     "openbmb/MiniCPM5-1B": "2026-05-27T11:45:15.056116+00:00",
-    "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive": "2026-05-27T11:45:15.056116+00:00"
+    "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive": "2026-05-27T11:45:15.056116+00:00",
+    "chopratejas/headroom": "2026-06-01T13:45:19.085260+00:00",
+    "run-llama/liteparse": "2026-06-01T13:45:19.085260+00:00",
+    "nvidia/LocateAnything-3B": "2026-06-01T13:45:19.085260+00:00",
+    "LiquidAI/LFM2.5-8B-A1B": "2026-06-01T13:45:19.085260+00:00"
   }
 }
