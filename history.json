@@ -2,7 +2,7 @@
   "posted_repos": {
     "colbymchenry/codegraph": "2026-06-01T13:45:19.085260+00:00",
     "anthropics/claude-plugins-official": "2026-05-22T22:16:34.330367+00:00",
-    "Lum1104/Understand-Anything": "2026-05-22T22:16:34.330367+00:00",
+    "Lum1104/Understand-Anything": "2026-06-02T12:13:08.322287+00:00",
     "bytedance-research/Lance": "2026-05-22T22:16:34.330367+00:00",
     "Supertone/supertonic-3": "2026-05-22T22:16:34.330367+00:00",
     "truelockmc/streambert": "2026-05-22T22:24:09.891389+00:00",
@@ -29,7 +29,7 @@
     "multica-ai/multica": "2026-05-25T11:58:25.710168+00:00",
     "Hmbown/CodeWhale": "2026-05-25T11:58:25.710168+00:00",
     "CohereLabs/command-a-plus-05-2026-w4a4": "2026-05-25T11:58:25.710168+00:00",
-    "meituan-longcat/LongCat-Video-Avatar-1.5": "2026-05-25T11:58:25.710168+00:00",
+    "meituan-longcat/LongCat-Video-Avatar-1.5": "2026-06-02T12:13:08.322287+00:00",
     "Leonxlnx/taste-skill": "2026-05-27T11:45:15.056116+00:00",
     "russellromney/honker": "2026-05-27T11:45:15.056116+00:00",
     "microsoft/agent-governance-toolkit": "2026-05-27T11:45:15.056116+00:00",
@@ -38,6 +38,8 @@
     "chopratejas/headroom": "2026-06-01T13:45:19.085260+00:00",
     "run-llama/liteparse": "2026-06-01T13:45:19.085260+00:00",
     "nvidia/LocateAnything-3B": "2026-06-01T13:45:19.085260+00:00",
-    "LiquidAI/LFM2.5-8B-A1B": "2026-06-01T13:45:19.085260+00:00"
+    "LiquidAI/LFM2.5-8B-A1B": "2026-06-01T13:45:19.085260+00:00",
+    "nesquena/hermes-webui": "2026-06-02T12:13:08.322287+00:00",
+    "stepfun-ai/Step-3.7-Flash": "2026-06-02T12:13:08.322287+00:00"
   }
 }
