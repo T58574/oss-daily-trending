@@ -11,7 +11,7 @@
     "openbmb/MiniCPM-V-4.6": "2026-05-22T22:24:09.891389+00:00",
     "unsloth/Qwen3.6-27B-MTP-GGUF": "2026-05-22T22:24:09.891389+00:00",
     "rohitg00/ai-engineering-from-scratch": "2026-05-22T22:27:58.285318+00:00",
-    "Imbad0202/academic-research-skills": "2026-05-22T22:27:58.285318+00:00",
+    "Imbad0202/academic-research-skills": "2026-06-03T12:48:09.563377+00:00",
     "RyanCodrai/turbovec": "2026-05-22T22:27:58.285318+00:00",
     "tencent/Hy-MT2-1.8B": "2026-05-22T22:27:58.285318+00:00",
     "SulphurAI/Sulphur-2-base": "2026-05-22T22:27:58.285318+00:00",
@@ -22,7 +22,7 @@
     "unsloth/Qwen3.6-35B-A3B-MTP-GGUF": "2026-05-23T10:01:26.302987+00:00",
     "mukul975/Anthropic-Cybersecurity-Skills": "2026-05-24T10:02:03.463565+00:00",
     "manaflow-ai/cmux": "2026-05-24T10:02:03.463565+00:00",
-    "hugohe3/ppt-master": "2026-05-24T10:02:03.463565+00:00",
+    "hugohe3/ppt-master": "2026-06-03T12:48:09.563377+00:00",
     "NemoStation/Marlin-2B": "2026-05-24T10:02:03.463565+00:00",
     "sapientinc/HRM-Text-1B": "2026-05-24T10:02:03.463565+00:00",
     "anthropics/knowledge-work-plugins": "2026-05-25T11:58:25.710168+00:00",
@@ -33,13 +33,15 @@
     "Leonxlnx/taste-skill": "2026-05-27T11:45:15.056116+00:00",
     "russellromney/honker": "2026-05-27T11:45:15.056116+00:00",
     "microsoft/agent-governance-toolkit": "2026-05-27T11:45:15.056116+00:00",
-    "openbmb/MiniCPM5-1B": "2026-05-27T11:45:15.056116+00:00",
+    "openbmb/MiniCPM5-1B": "2026-06-03T12:48:09.563377+00:00",
     "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive": "2026-05-27T11:45:15.056116+00:00",
     "chopratejas/headroom": "2026-06-01T13:45:19.085260+00:00",
     "run-llama/liteparse": "2026-06-01T13:45:19.085260+00:00",
     "nvidia/LocateAnything-3B": "2026-06-01T13:45:19.085260+00:00",
     "LiquidAI/LFM2.5-8B-A1B": "2026-06-01T13:45:19.085260+00:00",
     "nesquena/hermes-webui": "2026-06-02T12:13:08.322287+00:00",
-    "stepfun-ai/Step-3.7-Flash": "2026-06-02T12:13:08.322287+00:00"
+    "stepfun-ai/Step-3.7-Flash": "2026-06-02T12:13:08.322287+00:00",
+    "rtk-ai/rtk": "2026-06-03T12:48:09.563377+00:00",
+    "deepseek-ai/DeepSeek-V4-Pro": "2026-06-03T12:48:09.563377+00:00"
   }
 }
