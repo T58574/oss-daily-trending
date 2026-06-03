@@ -41,27 +41,46 @@ def safe_escape_html(text):
     return "".join(result)
 
 def format_fallback_message(hn_stories, hf_models, github_repos):
-    header = "⚡ <b>DEV DIGEST [Fallback]</b>\n"
-    lines = [header, "───────\n🚀 <b>TECH &amp; AI NEWS</b>"]
-    for i, s in enumerate(hn_stories[:3], 1):
-        title = html.escape(s.get("title") or "")
-        url = html.escape(s.get("url") or "")
-        lines.append(f"{i}. <a href=\"{url}\">{title}</a>")
-        
-    lines.append("\n───────\n🤖 <b>AI MODELS &amp; HACKS</b>")
-    for i, m in enumerate(hf_models[:2], 1):
-        name = html.escape(m.get("repo_name") or "")
-        url = f"https://huggingface.co/{name}"
-        lines.append(f"{i}. <a href=\"{url}\">{name}</a> <code>{m.get('pipeline_tag')}</code>")
-        
-    lines.append("\n───────\n📦 <b>MCP &amp; OPEN SOURCE GOLD</b>")
-    for i, r in enumerate(github_repos[:3], 1):
+    lines = []
+
+    # 1. GitHub Repo
+    if github_repos:
+        r = github_repos[0]
         name = html.escape(r.get("repo_name") or "")
         url = f"https://github.com/{name}"
-        desc = html.escape((r.get("description") or "")[:80])
-        lines.append(f"{i}. <a href=\"{url}\">{name}</a>\n   <i>{desc}</i>")
+        desc = html.escape((r.get("description") or "")[:150])
+        lines.append("📁 категория: open source")
+        lines.append(f"🔥 проект: {name}")
+        lines.append(f"💡 суть: {desc}")
+        lines.append("🛠 профит: Инструмент для разработчиков.")
+        lines.append(f"🔗 <a href=\"{url}\">ссылка на репозиторий</a>")
+        lines.append("──────")
         
-    return "\n".join(lines)
+    # 2. AI Model
+    if hf_models:
+        m = hf_models[0]
+        name = html.escape(m.get("repo_name") or "")
+        url = f"https://huggingface.co/{name}"
+        lines.append("📁 категория: ai модели")
+        lines.append(f"🔥 проект: {name}")
+        lines.append(f"💡 суть: Модель {m.get('pipeline_tag')}")
+        lines.append("🛠 профит: Запуск AI задач.")
+        lines.append(f"🔗 <a href=\"{url}\">ссылка на модель</a>")
+        lines.append("──────")
+
+    # 3. Hacker News
+    if hn_stories:
+        s = hn_stories[0]
+        title = html.escape(s.get("title") or "")
+        url = html.escape(s.get("url") or "")
+        lines.append("📁 категория: tech news")
+        lines.append(f"🔥 проект: {title}")
+        lines.append("💡 суть: Обсуждение в сообществе")
+        lines.append("🛠 профит: Быть в курсе трендов.")
+        lines.append(f"🔗 <a href=\"{url}\">ссылка на новость</a>")
+        lines.append("──────")
+        
+    return "\n\n".join(lines)
 
 def send(text):
     if not BOT_TOKEN or not CHAT_ID:
