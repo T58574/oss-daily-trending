@@ -24,7 +24,7 @@
     "manaflow-ai/cmux": "2026-05-24T10:02:03.463565+00:00",
     "hugohe3/ppt-master": "2026-06-03T12:48:09.563377+00:00",
     "NemoStation/Marlin-2B": "2026-05-24T10:02:03.463565+00:00",
-    "sapientinc/HRM-Text-1B": "2026-05-24T10:02:03.463565+00:00",
+    "sapientinc/HRM-Text-1B": "2026-06-05T18:01:08.683582+00:00",
     "anthropics/knowledge-work-plugins": "2026-05-25T11:58:25.710168+00:00",
     "multica-ai/multica": "2026-05-25T11:58:25.710168+00:00",
     "Hmbown/CodeWhale": "2026-05-25T11:58:25.710168+00:00",
@@ -45,6 +45,7 @@
     "deepseek-ai/DeepSeek-V4-Pro": "2026-06-03T12:48:09.563377+00:00",
     "google/gemma-4-12B-it": "2026-06-05T04:22:40.026780+00:00",
     "google/gemma-4-12B": "2026-06-05T04:22:40.026780+00:00",
-    "unsloth/gemma-4-12b-it-GGUF": "2026-06-05T15:18:19.543852+00:00"
+    "unsloth/gemma-4-12b-it-GGUF": "2026-06-05T15:18:19.543852+00:00",
+    "unicity-astrid/astrid": "2026-06-05T18:01:08.683582+00:00"
   }
 }
