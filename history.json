@@ -35,7 +35,7 @@
     "microsoft/agent-governance-toolkit": "2026-05-27T11:45:15.056116+00:00",
     "openbmb/MiniCPM5-1B": "2026-06-03T12:48:09.563377+00:00",
     "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive": "2026-06-05T11:34:01.819393+00:00",
-    "chopratejas/headroom": "2026-06-01T13:45:19.085260+00:00",
+    "chopratejas/headroom": "2026-06-08T18:29:41.186000+00:00",
     "run-llama/liteparse": "2026-06-01T13:45:19.085260+00:00",
     "nvidia/LocateAnything-3B": "2026-06-07T21:19:43.015129+00:00",
     "LiquidAI/LFM2.5-8B-A1B": "2026-06-01T13:45:19.085260+00:00",
@@ -49,6 +49,7 @@
     "unicity-astrid/astrid": "2026-06-05T18:01:08.683582+00:00",
     "ideogram-ai/ideogram-4-fp8": "2026-06-05T21:39:06.584535+00:00",
     "JetBrains/Mellum2-12B-A2.5B-Thinking": "2026-06-07T04:41:28.156364+00:00",
-    "OpenBMB/VoxCPM": "2026-06-08T04:46:21.439013+00:00"
+    "OpenBMB/VoxCPM": "2026-06-08T04:46:21.439013+00:00",
+    "ideogram-ai/ideogram-4-nf4": "2026-06-08T18:29:41.186000+00:00"
   }
 }
