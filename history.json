@@ -50,6 +50,7 @@
     "ideogram-ai/ideogram-4-fp8": "2026-06-05T21:39:06.584535+00:00",
     "JetBrains/Mellum2-12B-A2.5B-Thinking": "2026-06-07T04:41:28.156364+00:00",
     "OpenBMB/VoxCPM": "2026-06-08T04:46:21.439013+00:00",
-    "ideogram-ai/ideogram-4-nf4": "2026-06-08T18:29:41.186000+00:00"
+    "ideogram-ai/ideogram-4-nf4": "2026-06-08T18:29:41.186000+00:00",
+    "alibaba/open-code-review": "2026-06-08T21:55:52.430443+00:00"
   }
 }
