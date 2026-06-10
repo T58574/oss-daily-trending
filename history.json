@@ -53,6 +53,7 @@
     "ideogram-ai/ideogram-4-nf4": "2026-06-08T18:29:41.186000+00:00",
     "alibaba/open-code-review": "2026-06-08T21:55:52.430443+00:00",
     "bosonai/higgs-audio-v3-tts-4b": "2026-06-09T04:08:14.550772+00:00",
-    "apple/container": "2026-06-10T11:43:28.744845+00:00"
+    "apple/container": "2026-06-10T11:43:28.744845+00:00",
+    "nvidia/nemotron-3.5-asr-streaming-0.6b": "2026-06-10T15:53:49.585413+00:00"
   }
 }
