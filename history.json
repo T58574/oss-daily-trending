@@ -1,6 +1,6 @@
 {
   "posted_repos": {
-    "colbymchenry/codegraph": "2026-06-01T13:45:19.085260+00:00",
+    "colbymchenry/codegraph": "2026-06-11T04:42:23.501281+00:00",
     "anthropics/claude-plugins-official": "2026-05-22T22:16:34.330367+00:00",
     "Lum1104/Understand-Anything": "2026-06-02T12:13:08.322287+00:00",
     "bytedance-research/Lance": "2026-05-22T22:16:34.330367+00:00",
@@ -54,6 +54,7 @@
     "alibaba/open-code-review": "2026-06-08T21:55:52.430443+00:00",
     "bosonai/higgs-audio-v3-tts-4b": "2026-06-09T04:08:14.550772+00:00",
     "apple/container": "2026-06-10T11:43:28.744845+00:00",
-    "nvidia/nemotron-3.5-asr-streaming-0.6b": "2026-06-10T15:53:49.585413+00:00"
+    "nvidia/nemotron-3.5-asr-streaming-0.6b": "2026-06-10T15:53:49.585413+00:00",
+    "CohereLabs/North-Mini-Code-1.0": "2026-06-11T04:42:23.501281+00:00"
   }
 }
