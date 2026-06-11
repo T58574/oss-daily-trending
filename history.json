@@ -34,7 +34,7 @@
     "russellromney/honker": "2026-05-27T11:45:15.056116+00:00",
     "microsoft/agent-governance-toolkit": "2026-05-27T11:45:15.056116+00:00",
     "openbmb/MiniCPM5-1B": "2026-06-03T12:48:09.563377+00:00",
-    "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive": "2026-06-05T11:34:01.819393+00:00",
+    "HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive": "2026-06-11T18:50:39.971485+00:00",
     "chopratejas/headroom": "2026-06-08T18:29:41.186000+00:00",
     "run-llama/liteparse": "2026-06-01T13:45:19.085260+00:00",
     "nvidia/LocateAnything-3B": "2026-06-11T12:15:09.835491+00:00",
@@ -55,6 +55,7 @@
     "bosonai/higgs-audio-v3-tts-4b": "2026-06-09T04:08:14.550772+00:00",
     "apple/container": "2026-06-10T11:43:28.744845+00:00",
     "nvidia/nemotron-3.5-asr-streaming-0.6b": "2026-06-10T15:53:49.585413+00:00",
-    "CohereLabs/North-Mini-Code-1.0": "2026-06-11T04:42:23.501281+00:00"
+    "CohereLabs/North-Mini-Code-1.0": "2026-06-11T04:42:23.501281+00:00",
+    "addyosmani/agent-skills": "2026-06-11T18:50:39.971485+00:00"
   }
 }
