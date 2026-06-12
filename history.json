@@ -2,7 +2,7 @@
   "posted_repos": {
     "colbymchenry/codegraph": "2026-06-11T04:42:23.501281+00:00",
     "anthropics/claude-plugins-official": "2026-05-22T22:16:34.330367+00:00",
-    "Lum1104/Understand-Anything": "2026-06-02T12:13:08.322287+00:00",
+    "Lum1104/Understand-Anything": "2026-06-12T21:55:13.112522+00:00",
     "bytedance-research/Lance": "2026-05-22T22:16:34.330367+00:00",
     "Supertone/supertonic-3": "2026-05-22T22:16:34.330367+00:00",
     "truelockmc/streambert": "2026-05-22T22:24:09.891389+00:00",
@@ -61,6 +61,7 @@
     "kenn-io/agentsview": "2026-06-12T11:48:51.232814+00:00",
     "google/diffusiongemma-26B-A4B-it": "2026-06-12T11:48:51.232814+00:00",
     "moonshotai/Kimi-K2.7-Code": "2026-06-12T18:12:28.649981+00:00",
-    "maziyarpanahi/openmed": "2026-06-12T18:12:28.649981+00:00"
+    "maziyarpanahi/openmed": "2026-06-12T18:12:28.649981+00:00",
+    "MiniMaxAI/MiniMax-M3": "2026-06-12T21:55:13.112522+00:00"
   }
 }
