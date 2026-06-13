@@ -59,9 +59,10 @@
     "addyosmani/agent-skills": "2026-06-11T18:50:39.971485+00:00",
     "OBLITERATUS/Gemma-4-12B-OBLITERATED": "2026-06-12T04:44:38.273420+00:00",
     "kenn-io/agentsview": "2026-06-12T11:48:51.232814+00:00",
-    "google/diffusiongemma-26B-A4B-it": "2026-06-12T11:48:51.232814+00:00",
+    "google/diffusiongemma-26B-A4B-it": "2026-06-13T10:34:37.891672+00:00",
     "moonshotai/Kimi-K2.7-Code": "2026-06-12T18:12:28.649981+00:00",
     "maziyarpanahi/openmed": "2026-06-12T18:12:28.649981+00:00",
-    "MiniMaxAI/MiniMax-M3": "2026-06-12T21:55:13.112522+00:00"
+    "MiniMaxAI/MiniMax-M3": "2026-06-12T21:55:13.112522+00:00",
+    "mvanhorn/last30days-skill": "2026-06-13T10:34:37.891672+00:00"
   }
 }
