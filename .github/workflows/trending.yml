@@ -1,40 +1,40 @@
-name: Daily Trending
+# name: Daily Trending
 
-on:
-  schedule:
-    - cron: '0 */4 * * *'  # каждый день в 8:00 UTC (11:00 МСК)
-  workflow_dispatch:       # ручной запуск для теста
+# on:
+#   schedule:
+#     - cron: '0 */4 * * *'  # каждый день в 8:00 UTC (11:00 МСК)
+#   workflow_dispatch:       # ручной запуск для теста
 
-jobs:
-  send:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write  # разрешаем коммитить историю обратно в репозиторий
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+# jobs:
+#   send:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write  # разрешаем коммитить историю обратно в репозиторий
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'  # кешируем зависимости для скорости
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.12'
+#           cache: 'pip'  # кешируем зависимости для скорости
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
 
-      - name: Run script
-        run: python run.py
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+#       - name: Run script
+#         run: python run.py
+#         env:
+#           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+#           CHAT_ID: ${{ secrets.CHAT_ID }}
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 
-      - name: Commit and push history database
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add history.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update trending history database [skip ci]" && git push)
+#       - name: Commit and push history database
+#         run: |
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#           git add history.json
+#           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update trending history database [skip ci]" && git push)
